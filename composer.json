@@ -1,0 +1,16 @@
+{
+  "require": {
+    "filp/whoops": "dev-master",
+    "symfony/var-dumper": "~3",
+    "symfony/yaml": "^4.3",
+    "symfony/http-foundation": "~3",
+    "illuminate/support": "~v5.4",
+    "monolog/monolog": "~1",
+    "doctrine/orm": "v2.5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Xt\\Rpc\\": "app/"
+    }
+  }
+}
