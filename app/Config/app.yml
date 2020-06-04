@@ -1,0 +1,41 @@
+setting:
+  sandbox     : true
+  request_log : false
+  timezone    : UTC
+  secret_key  : xxxxxxxxxxxxxxxx
+  default     : 1001001|XT_app|zh_CN
+
+db_data:
+    adapter   : mysql
+    host      : 127.0.0.1
+    port      : 3306
+    user      : root
+    pass      : root
+    db        : v3-rpc
+    charset   : utf8
+
+db_logs:
+    adapter   :
+    host      :
+    port      :
+    user      :
+    pass      :
+    db        :
+    charset   :
+
+db_trade:
+    adapter   : Mysql
+    host      : 192.168.3.9
+    port      : 3306
+    user      : cn_trade
+    pass      : JTVRIyJ8l6EqGjED
+    db        : cn_trade
+    charset   : utf8mb4
+
+redis:
+    host      : 127.0.0.1
+    port      : 6379
+
+# 允许的IP列表, 逗号分割
+ip_allow:
+    127.0.0.1

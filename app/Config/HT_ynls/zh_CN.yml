@@ -1,0 +1,20 @@
+setting:
+  timezone  : UTC
+
+0:
+    adapter : mysql
+    host    : 127.0.0.1
+    port    : 3306
+    user    : root
+    pass    : root
+    db      : user_db_ft
+    charset : utf8mb4
+
+1:
+  adapter : mysql
+  host    : 127.0.0.1
+  port    : 3306
+  user    : root
+  pass    : root
+  db      : center_sys_ft
+  charset : utf8mb4

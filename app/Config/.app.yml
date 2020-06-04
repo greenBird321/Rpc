@@ -1,0 +1,32 @@
+setting:
+  sandbox     : false
+  request_log : false
+  timezone    : UTC
+  secret_key  : xxxxxxxxxxxxxxxx
+  default     : 1001001|XT_app|zh_CN
+
+db_data:
+    adapter   :
+    host      :
+    port      :
+    user      :
+    pass      :
+    db        :
+    charset   :
+
+db_logs:
+    adapter   :
+    host      :
+    port      :
+    user      :
+    pass      :
+    db        :
+    charset   :
+
+redis:
+    host      : 127.0.0.1
+    port      : 6379
+
+# 允许的IP列表, 逗号分割
+ip_allow:
+    127.0.0.1

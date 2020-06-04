@@ -1,0 +1,47 @@
+setting:
+  timezone  : PRC
+
+zone_list:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : ssss2
+   charset : utf8mb4
+
+1:
+  adapter : mysql
+  host    : 127.0.0.1
+  port    : 3306
+  user    : root
+  pass    : root
+  db      : ssss2
+  charset : utf8mb4
+
+20001:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : ssss2
+   charset : utf8mb4
+
+20002:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : ssss2
+   charset : utf8mb4
+
+20003:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : ssss2
+   charset : utf8mb4

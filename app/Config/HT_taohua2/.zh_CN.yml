@@ -1,0 +1,20 @@
+setting:
+  timezone  : UTC
+
+zone_list:
+  adapter :
+  host    :
+  port    :
+  user    :
+  pass    :
+  db      :
+  charset :
+
+1001:
+  adapter :
+  host    :
+  port    :
+  user    :
+  pass    :
+  db      :
+  charset :
