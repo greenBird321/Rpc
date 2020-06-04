@@ -129,16 +129,18 @@ class ZoneService extends Service
         if ($parameter['id'] == null) {
             return ['code' => 1, 'msg' => 'missing parameter'];
         }
-        $parameter['id'] = intval($parameter['id']);
-        $parameter['port'] = intval($parameter['port']);
+        $parameter['id']       = intval($parameter['id']);
+        $parameter['port']     = intval($parameter['port']);
+        $parameter['merge_id'] = intval($parameter['merge_id']);
 
         $data = [
-            'Name'    => $parameter['name'],
-            'Flag'    => $parameter['flag'],
-            'Status'  => $parameter['open_mode'],
-            'GsIp'    => $parameter['host'],
-            'GsPort'  => $parameter['port'],
+            'Name'      => $parameter['name'],
+            'Flag'      => $parameter['flag'],
+            'Status'    => $parameter['open_mode'],
+            'GsIp'      => $parameter['host'],
+            'GsPort'    => $parameter['port'],
             'NewRegion' => $parameter['is_new'],
+            'MergeId'   => $parameter['merge_id'],
         ];
         try {
             $this->gameDb('zone_list')->update('ServerRegion', $data, ['ServerId' => $parameter['id']]);
@@ -151,11 +153,12 @@ class ZoneService extends Service
 
     public function remove($parameter)
     {
-        if (empty($parameter['id'])) {
+        if ($parameter['id'] == null) {
             return ['code' => 1, 'msg' => 'missing parameter'];
         }
+
         try {
-            $this->gameDb('zone_list')->delete('game_server', ['group_name' => $parameter['id']]);
+            $this->gameDb('zone_list')->delete('ServerRegion', ['ServerId' => $parameter['id']]);
         } catch (Exception $e) {
             return ['code' => 1, 'msg' => 'failed'];
         }

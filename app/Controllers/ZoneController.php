@@ -162,6 +162,8 @@ class ZoneController extends ControllerBase
         $parameter['open_mode'] = $this->request->query->get('open_mode');
         $parameter['flag'] = $this->request->query->get('flag');
         $parameter['is_new'] = $this->request->query->get('is_new');
+        $parameter['merge_id'] = $this->request->query->get('merge_id');
+
         return $this->api('Zone', __FUNCTION__, $parameter);
     }
 
