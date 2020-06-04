@@ -127,6 +127,7 @@ class ZoneController extends ControllerBase
         $parameter['color_mode'] = $this->request->query->get('color_mode');
         $parameter['full_mode'] = $this->request->query->get('full_mode');
         $parameter['visible_mode'] = $this->request->query->get('visible_mode');
+        $parameter['flag'] = $this->request->query->get('flag');
         return $this->api('Zone', __FUNCTION__, $parameter);
     }
 
@@ -158,13 +159,9 @@ class ZoneController extends ControllerBase
         $parameter['name'] = $this->request->query->get('name');
         $parameter['host'] = $this->request->query->get('host');
         $parameter['port'] = $this->request->query->get('port');
-        $parameter['status'] = $this->request->query->get('status');
-        $parameter['tag'] = $this->request->query->get('tag');
-        $parameter['custom'] = $this->request->query->get('custom');
         $parameter['open_mode'] = $this->request->query->get('open_mode');
-        $parameter['color_mode'] = $this->request->query->get('color_mode');
-        $parameter['full_mode'] = $this->request->query->get('full_mode');
-        $parameter['visible_mode'] = $this->request->query->get('visible_mode');
+        $parameter['flag'] = $this->request->query->get('flag');
+        $parameter['is_new'] = $this->request->query->get('is_new');
         return $this->api('Zone', __FUNCTION__, $parameter);
     }
 
