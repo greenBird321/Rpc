@@ -185,4 +185,48 @@ class CardController extends ControllerBase
         return $this->api('Card', __FUNCTION__, $parameter);
     }
 
+    /**
+     * 删除
+     * @api {get} /card/search
+     * @apiGroup card
+     * @apiName search
+     *
+     * @apiParam {String} topic_id 主题ID
+     * @apiParam {String} role_id  角色ID
+     *
+     * @apiSuccessExample Success-Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *        "code": 0,
+     *        "msg": "success"
+     *        "data": []
+     *    }
+     */
+    public function search()
+    {
+        $parameter['role_id'] = $this->request->query->get('role_id');
+        $parameter['topic_id'] = $this->request->query->get('topic_id');
+        return $this->api('Card', __FUNCTION__, $parameter);
+    }
+
+    /**
+     * 下载礼包码
+     * @api {get} /card/download
+     * @apiGroup card
+     * @apiName download
+     *
+     * @apiParam {String} id 主题ID
+     *
+     * @apiSuccessExample Success-Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *        "code": 0,
+     *        "msg": "success"
+     *    }
+     */
+    public function download()
+    {
+        $parameter['id'] = $this->request->query->get('id');
+        return $this->api('Card', __FUNCTION__, $parameter);
+    }
 }

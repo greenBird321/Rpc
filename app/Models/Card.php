@@ -131,4 +131,22 @@ class Card extends Model
         return true;
     }
 
+
+    public function search($parameter = [])
+    {
+        $sql = "SELECT * FROM `logs_card` WHERE user_id={$parameter['role_id']} AND item_id={$parameter['topic_id']}  ORDER BY `create_time` DESC";
+        $data = $this->db_data->fetchAll($sql);
+        return ['data' => $data];
+    }
+
+    public function download($id)
+    {
+        $sql = "SELECT code,status FROM `card_code` WHERE topic_id={$id}";
+        $data = $this->db_data->fetchAll($sql);
+        $result = [];
+        foreach ($data as $v) {
+            $result[] = array_values($v);
+        }
+        return $result;
+    }
 }
