@@ -40,7 +40,7 @@ class Card extends Model
         $sqlCount = str_replace('*', 'COUNT(1) count', $sql);
         $sqlData = str_replace(
             '*',
-            'id,type,data,title,limit_times,expired_in,start_time',
+            'id,type,data,status,title,limit_times,expired_in,start_time',
             $sql
         );
         $sqlData .= " ORDER BY id DESC LIMIT $offset,$size";

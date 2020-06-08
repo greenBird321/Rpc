@@ -154,12 +154,13 @@ class CardController extends ControllerBase
     public function modify()
     {
         $parameter['id'] = $this->request->query->get('id');
-        $parameter['data'] = $this->request->query->get('data');
+        //$parameter['data'] = $this->request->query->get('data');
         $parameter['title'] = $this->request->query->get('title');
         $parameter['intro'] = $this->request->query->get('intro');
-        $parameter['limit_times'] = $this->request->query->get('limit_times');
+        //$parameter['limit_times'] = $this->request->query->get('limit_times');
         $parameter['expired_in'] = $this->request->query->get('expired_in');
         $parameter['start_time'] = $this->request->query->get('start_time');
+        $parameter['status'] = empty($this->request->query->get('status')) ? 0 : $this->request->query->get('status');
         return $this->api('Card', __FUNCTION__, $parameter);
     }
 
