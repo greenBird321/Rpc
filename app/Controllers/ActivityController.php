@@ -434,4 +434,14 @@ class ActivityController extends ControllerBase
         return $this->api('Activity', 'logs', $parameter);
     }
 
+    /**
+     * 测试api
+     * msg : 信息
+     */
+    public function test()
+    {
+        $parameter['msg'] = $this->request->query->get('msg');
+        return $this->api('Activity', 'test', $parameter);
+    }
+
 }
