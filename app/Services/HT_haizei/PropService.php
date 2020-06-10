@@ -30,10 +30,11 @@ class PropService extends Service
             'code' => 0,
             'msg'  => 'success',
             'data' => [
-                'coin'   => '货币',
-                'exp'    => '经验',
-                'attach' => '道具',
-                'mail'   => '邮件',
+                //'coin'   => '货币',
+                //'exp'    => '经验',
+                //'attach' => '道具',
+                'mail'         => '邮件',
+                'attachServer' => '全服发奖',
             ]
         ];
     }

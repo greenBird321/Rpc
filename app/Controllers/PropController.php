@@ -132,6 +132,7 @@ class PropController extends ControllerBase
      *
      * @apiParam {String} zone 区服ID
      * @apiParam {String} user_id 玩家ID
+     * @apiParam {String} amount 发奖内容
      * @apiParam {String} title 标题
      * @apiParam {String} msg 邮件内容
      *
@@ -148,7 +149,35 @@ class PropController extends ControllerBase
         $parameter['user_id'] = $this->request->query->get('user_id');
         $parameter['title'] = $this->request->query->get('title');
         $parameter['msg'] = $this->request->query->get('msg');
+        $parameter['amount'] = $this->request->query->get('amount');
         return $this->api('Prop', __FUNCTION__, $parameter);
     }
 
+    /**
+     * 全服邮件
+     * @api {get} /prop/attachServer 全服道具邮件操作mail
+     * @apiGroup prop
+     * @apiName mail
+     *
+     * @apiParam {String} zone 区服ID
+     * @apiParam {String} amount 发奖内容
+     * @apiParam {String} title 标题
+     * @apiParam {String} msg 邮件内容
+     *
+     * @apiSuccessExample Success-Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *        "code": 0,
+     *        "msg": "success"
+     *    }
+     */
+    public function attachServer()
+    {
+        $parameter['zone']      = $this->request->query->get('zone');
+        $parameter['title']     = $this->request->query->get('title');
+        $parameter['msg']       = $this->request->query->get('msg');
+        $parameter['attach']    = $this->request->query->get('attach');
+        $parameter['award_url'] = $this->di['db_cfg']['game_url']['award_url'];
+        return $this->api('Prop', __FUNCTION__, $parameter);
+    }
 }
