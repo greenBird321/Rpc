@@ -435,6 +435,32 @@ class ActivityController extends ControllerBase
     }
 
     /**
+     * 活动保存
+     * @api {get} /activity/import 活动保存import
+     * @apiGroup activity
+     * @apiName import
+     *
+     * @apiParam {string} [title] 活动ID
+     * @apiParam {string} [content] 活动配置ID
+     */
+    public function import()
+    {
+        $parameter['title'] = $this->request->query->get('title');
+        $parameter['content'] = $this->request->query->get('content');
+        return $this->api('Activity', 'import', $parameter);
+    }
+
+    /**
+     * 服务端拉取活动
+     * @api {get} /activity/game 服务端拉取活动game
+     *
+     */
+    public function game()
+    {
+        return $this->api('Activity', 'game');
+    }
+
+    /**
      * 测试api
      * msg : 信息
      */

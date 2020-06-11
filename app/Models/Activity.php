@@ -207,4 +207,12 @@ class Activity extends Model
         ];
     }
 
+    public function saveActivity($parameter = []){
+        return $this->db_data->insert('ML_activity', $parameter);
+    }
+
+    public function getActivityList(){
+        $sql = "SELECT title,content FROM ML_activity";
+        return $this->db_data->fetchAll($sql);
+    }
 }

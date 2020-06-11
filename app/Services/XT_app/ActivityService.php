@@ -327,8 +327,22 @@ class ActivityService extends Service
      * 导入
      * @return int
      */
-    public function import()
+    public function import($parameter)
     {
+        $data['title'] = $parameter['title'];
+        $data['content'] = $parameter['content'];
+        $data['create_time'] = date('Y-m-d H:i:s', time());
+
+        try {
+            $this->activityModel->saveActivity($data);
+        } catch (Exception $e) {
+            return [
+                'code' => 1,
+                'msg'  => 'failed'
+            ];
+        }
+
+        return ['code' => 0, 'msg' => 'success'];
     }
 
 
@@ -337,6 +351,32 @@ class ActivityService extends Service
      */
     public function export()
     {
+    }
+
+    /**
+     * 服务端拉取活动
+     */
+    public function game()
+    {
+        $result = $this->activityModel->getActivityList();
+        if (empty($result)) {
+            return ['code' => 1, 'msg' => 'failed'];
+        }
+        $count = count($result);
+
+        if ($count == 1) {
+           return [
+               'code' => 0,
+               'msg' => 'success',
+               'data' => $result[0]
+           ];
+        }
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $result
+        ];
     }
 
 }
