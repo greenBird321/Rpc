@@ -362,18 +362,6 @@ class ActivityService extends Service
         if (empty($result)) {
             return ['code' => 1, 'msg' => 'failed'];
         }
-        $count = count($result);
-
-        if ($count == 1) {
-            return [
-               'code' => 0,
-               'msg' => 'success',
-               'data' => [
-                   'title' => $result[0]['title'],
-                   'content' => base64_encode($result[0]['content'])
-               ]
-            ];
-        }
 
         $data = [];
         foreach ($result as $key => $value) {
