@@ -374,6 +374,7 @@ class ActivityService extends Service
         return [
             'code' => 0,
             'msg' => 'success',
+            'zone' => $parameter['zone'],
             'data' => $data
         ];
     }
