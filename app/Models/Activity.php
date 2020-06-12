@@ -208,11 +208,25 @@ class Activity extends Model
     }
 
     public function saveActivity($parameter = []){
-        return $this->db_data->insert('ML_activity', $parameter);
+        $tag = true;
+        foreach ($parameter['zone'] as $key => $value) {
+            $data = [
+                'title' => $parameter['title'],
+                'zone' => $value,
+                'content' => $parameter['content'],
+                'create_time' => $parameter['create_time']
+            ];
+            $result = $this->db_data->insert('ML_activity', $data);
+            if (!$result) {
+                $tag = false;
+                break;
+            }
+        }
+        return $tag;
     }
 
-    public function getActivityList(){
-        $sql = "SELECT title,content FROM ML_activity";
+    public function getActivityList($zone){
+        $sql = "SELECT `zone`, title, content FROM ML_activity WHERE `zone`=$zone";
         return $this->db_data->fetchAll($sql);
     }
 }

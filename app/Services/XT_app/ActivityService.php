@@ -331,6 +331,7 @@ class ActivityService extends Service
     {
         $data['title'] = $parameter['title'];
         $data['content'] = $parameter['content'];
+        $data['zone'] = $parameter['zone'];
         $data['create_time'] = date('Y-m-d H:i:s', time());
 
         try {
@@ -356,9 +357,9 @@ class ActivityService extends Service
     /**
      * 服务端拉取活动
      */
-    public function game()
+    public function game($parameter)
     {
-        $result = $this->activityModel->getActivityList();
+        $result = $this->activityModel->getActivityList($parameter['zone']);
         if (empty($result)) {
             return ['code' => 1, 'msg' => 'failed'];
         }

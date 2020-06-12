@@ -30,7 +30,7 @@ class UserService extends Service
      * 用户信息
      * @param $parameter
      * @return mixed
-     * http://v3-rpc.com/ML_lmyz/zh_CN/user/profile?zone=1006001&user_id=2
+     * http://v3-rpc.com/ML_lmyz/zh_CN/user/profile?zone=1006001&user_id=2&name=&account_id=
      */
     public function profile($parameter)
     {
@@ -183,6 +183,50 @@ WHERE
             'msg' => 'success',
             'count' => $count,
             'data' => $result
+        ];
+    }
+
+    /**
+     * 用户道具查询
+     * @param $parameter
+     * @return mixed
+     * http://v3-rpc.com/ML_lmyz/zh_CN/user/propinfo?zone=1006001&user_id=2&action_id=&status=2
+     */
+    public function propinfo($parameter){
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg'  => 'missing parameter'
+            ];
+        }
+
+        $sql = "SELECT ItemId, ItemNum,ItemLeft, GetItem, Action FROM ItemLog WHERE 1=1 ";
+
+        if (!empty($parameter['action_id'])) {
+            $sql .= "AND Action in ({$parameter['action_id']}) ";
+        }
+
+        // 2: 代表 全部
+        if ($parameter['status'] != 2) {
+            $sql .= "AND GetItem = {$parameter['status']}";
+        }
+
+        if (!empty($parameter['user_id'])) {
+            $sql .= "AND RoleID={$parameter['user_id']}";
+            $attribute = $this->gameDb($parameter['zone'].'_log')->fetchAll($sql);
+        }
+
+        if (empty($attribute)) {
+            return [
+                'code' => 1,
+                'msg'  => 'failed'
+            ];
+        }
+
+        return [
+            'code' => 0,
+            'msg'  => 'success',
+            'data' => $attribute
         ];
     }
 }

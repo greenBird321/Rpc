@@ -447,6 +447,7 @@ class ActivityController extends ControllerBase
     {
         $parameter['title'] = $this->request->query->get('title');
         $parameter['content'] = $this->request->query->get('content');
+        $parameter['zone'] = $this->request->query->get('zone');
         return $this->api('Activity', 'import', $parameter);
     }
 
@@ -457,7 +458,8 @@ class ActivityController extends ControllerBase
      */
     public function game()
     {
-        return $this->api('Activity', 'game');
+        $parameter['zone'] = $this->request->query->get('zone');
+        return $this->api('Activity', 'game', $parameter);
     }
 
     /**

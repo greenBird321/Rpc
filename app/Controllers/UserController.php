@@ -60,4 +60,39 @@ class UserController extends ControllerBase
         return $this->api('User', __FUNCTION__, $parameter);
     }
 
+    /**
+     * 用户消耗查询
+     * @api {get} /user/propinfo?zone=100&user_id=:user_id 用户信息
+     * @apiGroup user
+     * @apiName propinfo
+     *
+     * @apiParam {String} zone 服务器ID
+     * @apiParam {String} [user_id] 玩家ID
+     * @apiParam {String} [action_id] 行为id
+     * @apiParam {String} [status] 0: 失去道具 1: 获得道具 2: 全部道具
+     *
+     * @apiSuccess {Number} code 返回状态
+     * @apiSuccess {String} msg 返回消息
+     * @apiSuccess {String} data 返回数据
+     *
+     * @apiSuccessExample Success-Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *        "code": 0,
+     *        "msg": "success",
+     *        "data": {
+     *
+     *        }
+     *    }
+     *
+     */
+    public function propinfo()
+    {
+        $parameter['zone'] = $this->request->query->get('zone');
+        $parameter['user_id'] = $this->request->query->get('user_id');
+        $parameter['action_id'] = $this->request->query->get('action_id');
+        $parameter['status'] = $this->request->query->get('status');
+
+        return $this->api('User', __FUNCTION__, $parameter);
+    }
 }
