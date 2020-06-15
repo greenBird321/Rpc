@@ -336,7 +336,7 @@ class ActivityService extends Service
 
         try {
             $this->activityModel->saveActivity($data);
-            // 发送给服务端
+            // 发送给服务端将活动
 
         } catch (Exception $e) {
             return [

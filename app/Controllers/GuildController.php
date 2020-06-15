@@ -14,6 +14,6 @@ class GuildController extends ControllerBase {
         $parameter['guild_id'] = $this->request->query->get('guild_id');
         $parameter['guild_name'] = $this->request->query->get('guild_name');
 
-        $this->api('Guild', __FUNCTION__, $parameter);
+        return $this->api('Guild', __FUNCTION__, $parameter);
     }
 }
