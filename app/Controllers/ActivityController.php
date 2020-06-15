@@ -435,13 +435,14 @@ class ActivityController extends ControllerBase
     }
 
     /**
-     * 活动保存
+     * 活动保存并上报服务端
      * @api {get} /activity/import 活动保存import
      * @apiGroup activity
      * @apiName import
      *
-     * @apiParam {string} [title] 活动ID
-     * @apiParam {string} [content] 活动配置ID
+     * @apiParam {string} [title] 活动标题
+     * @apiParam {string} [content] 活动内容
+     * @apiParam {string} [zone] 活动所属服务器
      */
     public function import()
     {

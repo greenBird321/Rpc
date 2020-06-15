@@ -324,7 +324,7 @@ class ActivityService extends Service
 
 
     /**
-     * 导入
+     * 活动保存并上报服务端
      * @return int
      */
     public function import($parameter)
@@ -336,6 +336,8 @@ class ActivityService extends Service
 
         try {
             $this->activityModel->saveActivity($data);
+            // 发送给服务端
+
         } catch (Exception $e) {
             return [
                 'code' => 1,
@@ -355,7 +357,7 @@ class ActivityService extends Service
     }
 
     /**
-     * 服务端拉取活动
+     * 服务端主动拉取活动
      */
     public function game($parameter)
     {
@@ -378,5 +380,4 @@ class ActivityService extends Service
             'data' => $data
         ];
     }
-
 }
