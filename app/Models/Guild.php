@@ -20,7 +20,7 @@ class Guild extends Model {
             $roles_id = $role_id;
         }
         // 目前只查出玩家的name
-        $sql = "SELECT `RoleID`,`name` 
+        $sql = "SELECT `RoleID`,`name`, `PlayerLv`, `MPower`,`LogoutTime`
 FROM
 	BasicRes 
 WHERE

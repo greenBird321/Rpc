@@ -44,6 +44,8 @@ FROM
 		gc.GuildLevel,
 		gc.GuildContributionPoint,
 		gc.GuildJoinLevel,
+		gc.CreateTime,
+		gc.GuildLevelExp,
 		gm.RoleID,
 		gm.ServerID,
 		gm.GuildGrade,
@@ -70,6 +72,8 @@ FROM
 		gc.GuildLevel,
 		gc.GuildContributionPoint,
 		gc.GuildJoinLevel,
+		gc.CreateTime,
+		gc.GuildLevelExp,
 		gm.RoleID,
 		gm.ServerID,
 		gm.GuildGrade,
@@ -102,6 +106,7 @@ WHERE
                     $creater_id = $v;
                 }
             }
+            $r[$key]['CreateTime'] = date('Y-m-d H:i:s');
         }
 
         // 通过role_id查询玩家详细信息
@@ -115,10 +120,16 @@ WHERE
             ];
         }
 
+        $player = [];
+        // 拼装公会成员属性
         foreach ($r as $k => $v) {
             foreach ($role as $i => $j) {
                 if ($v['RoleID'] == $j['RoleID']) {
-                    $r[$k]['name'] = $j['name'];
+                    $player[$k]['PlayerName'] = $j['name'];
+                    $player[$k]['PlayerLv'] = $j['PlayerLv'];
+                    $player[$k]['MPower'] = $j['MPower'];
+                    $player[$k]['Logout_time'] = date('Y-m-d H:i:s', $j['LogoutTime']);
+                    $player[$k]['GuildGrade'] = $v['GuildGrade'];
                 }
 
                 if ($v['CreaterID'] == $creater[0]['RoleID']) {
@@ -130,7 +141,10 @@ WHERE
         return [
             'code' => 0,
             'msg' => 'success',
-            'data' => $r
+            'data' => [
+                'guildData' => $r,
+                'playerData' => $player
+            ]
         ];
     }
 }

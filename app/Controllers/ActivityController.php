@@ -464,6 +464,17 @@ class ActivityController extends ControllerBase
     }
 
     /**
+     * ML查看活动列表
+     * @return mixed
+     */
+    public function ml_lists()
+    {
+        $parameter['page'] = $this->request->query->get('page', 1);
+        $parameter['size'] = $this->request->query->get('size', 200);
+        return $this->api('Activity', 'ml_lists', $parameter);
+    }
+
+    /**
      * 测试api
      * msg : 信息
      */

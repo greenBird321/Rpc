@@ -209,7 +209,6 @@ class Activity extends Model
 
     public function saveActivity($parameter = [])
     {
-        $tag = true;
         if (strpos($parameter['zone'], ',')) {
             $parameter['zone'] = explode(',', $parameter['zone']);
             foreach ($parameter['zone'] as $key => $value) {
@@ -219,12 +218,15 @@ class Activity extends Model
                     'content' => $parameter['content'],
                     'create_time' => $parameter['create_time']
                 ];
-                $result = $this->db_data->insert('ML_activity', $data);
-                if (!$result) {
-                    $tag = false;
-                }
             }
-            return $tag;
+            $result = $this->db_data->insert('ML_activity', $data);
+
+            if (!$result) {
+                return false;
+            }
+            $last_id = $this->db_data->lastInsertId();
+            return $last_id;
+
         } else {
             $data   = [
                 'title' => $parameter['title'],
@@ -233,17 +235,55 @@ class Activity extends Model
                 'create_time' => $parameter['create_time'],
             ];
             $result = $this->db_data->insert('ML_activity', $data);
+
             if (!$result) {
-                $tag = false;
+               return false;
             }
-            return $tag;
+
+            $last_id = $this->db_data->lastInsertId();
+            return $last_id;
         }
 
 
     }
 
-    public function getActivityList($zone){
-        $sql = "SELECT `zone`, title, content FROM ML_activity WHERE `zone`=$zone";
-        return $this->db_data->fetchAll($sql);
+    public function getMLActivityList($parameter)
+    {
+        $sql  = "SELECT * FROM `ML_activity` WHERE 1=1";
+
+        // 分页
+        $page   = !empty($parameter['page']) ? $parameter['page'] : 1;
+        $size   = !empty($parameter['size']) ? $parameter['size'] : 200;
+        $offset = ($page - 1) * $size;
+
+        // SQL
+        $sqlCount = str_replace('*', 'COUNT(1) count', $sql);
+        $sqlData  = str_replace(
+            '*',
+            'id, title, zone, status, create_time',
+            $sql
+        );
+        $sqlData  .= " ORDER BY id DESC, create_time DESC LIMIT $offset,$size";
+
+
+        // count
+        $count = $this->db_data->fetchColumn($sqlCount);
+        if (!$count) {
+            return ['count' => 0];
+        }
+
+        // result
+        $results = $this->db_data->fetchAll($sqlData);
+
+        return [
+            'count' => $count,
+            'data' => $results
+        ];
+    }
+
+    public function updateStatus($id)
+    {
+        $sql = "UPDATE `ML_activity` SET status = 1 WHERE id = $id";
+        return $this->db_data->fetchAssoc($sql);
     }
 }

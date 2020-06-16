@@ -322,62 +322,10 @@ class ActivityService extends Service
         );
     }
 
-
-    /**
-     * 活动保存并上报服务端
-     * @return int
-     */
-    public function import($parameter)
-    {
-        $data['title'] = $parameter['title'];
-        $data['content'] = $parameter['content'];
-        $data['zone'] = $parameter['zone'];
-        $data['create_time'] = date('Y-m-d H:i:s', time());
-
-        try {
-            $this->activityModel->saveActivity($data);
-            // 发送给服务端将活动
-
-        } catch (Exception $e) {
-            return [
-                'code' => 1,
-                'msg'  => 'failed'
-            ];
-        }
-
-        return ['code' => 0, 'msg' => 'success'];
-    }
-
-
     /**
      * 导出
      */
     public function export()
     {
-    }
-
-    /**
-     * 服务端主动拉取活动
-     */
-    public function game($parameter)
-    {
-        $result = $this->activityModel->getActivityList($parameter['zone']);
-        if (empty($result)) {
-            return ['code' => 1, 'msg' => 'failed'];
-        }
-
-        $data = [];
-        foreach ($result as $key => $value) {
-            $data[] = [
-                'title' => $value['title'],
-                'content' => base64_encode($value['content'])
-            ];
-        }
-        return [
-            'code' => 0,
-            'msg' => 'success',
-            'zone' => $parameter['zone'],
-            'data' => $data
-        ];
     }
 }
