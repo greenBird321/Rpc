@@ -249,7 +249,7 @@ class Activity extends Model
 
     public function getActivityList($zone)
     {
-        $sql = "SELECT `title`, `content` FROM `ML_activity` WHERE `zone` = $zone";
+        $sql = "SELECT `title`, `content` FROM `ML_activity` WHERE `zone` IN ($zone, 0)";
         return $this->db_data->fetchAll($sql);
     }
 
