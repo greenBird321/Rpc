@@ -212,21 +212,23 @@ class Activity extends Model
         if (strpos($parameter['zone'], ',')) {
             $parameter['zone'] = explode(',', $parameter['zone']);
             foreach ($parameter['zone'] as $key => $value) {
-                $data = [
+                $data   = [
                     'title' => $parameter['title'],
                     'zone' => $value,
                     'content' => $parameter['content'],
                     'create_time' => $parameter['create_time']
                 ];
+                $result = $this->db_data->insert('ML_activity', $data);
+                if (!$result) {
+                    return false;
+                }
+                $last_id = $this->db_data->lastInsertId();
+                $zid[]   = [
+                    'zone' => $value,
+                    'id' => $last_id
+                ];
             }
-            $result = $this->db_data->insert('ML_activity', $data);
-
-            if (!$result) {
-                return false;
-            }
-            $last_id = $this->db_data->lastInsertId();
-            return $last_id;
-
+            return $zid;
         } else {
             $data   = [
                 'title' => $parameter['title'],
@@ -237,14 +239,16 @@ class Activity extends Model
             $result = $this->db_data->insert('ML_activity', $data);
 
             if (!$result) {
-               return false;
+                return false;
             }
 
             $last_id = $this->db_data->lastInsertId();
-            return $last_id;
+            $zid[]   = [
+                'zone' => $parameter['zone'],
+                'id' => $last_id
+            ];
+            return $zid;
         }
-
-
     }
 
     public function getActivityList($zone)
@@ -289,7 +293,6 @@ class Activity extends Model
 
     public function updateStatus($id)
     {
-        $sql = "UPDATE `ML_activity` SET status = 1 WHERE id = $id";
-        return $this->db_data->fetchAssoc($sql);
+        return $this->db_data->update('ML_activity', ['status' => 1], ['id' => $id]);;
     }
 }

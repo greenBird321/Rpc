@@ -38,7 +38,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
         $data['create_time'] = date('Y-m-d H:i:s', time());
         $url                 = $this->di['db_cfg']['game_url']['award_url'];
         try {
-            $id = $this->activityModel->saveActivity($data);
+            $zones = $this->activityModel->saveActivity($data);
         } catch (Exception $e) {
             return [
                 'code' => 1,
@@ -46,24 +46,35 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
             ];
         }
 
-        // 发送给服务端将活动
-        $result = $this->http($url, 'post', json_encode([
+        $pdata = [
             'code' => 0,
             'msg' => 'success',
+            'zones' => $zones,
             'data' => [
-                [
-                    'title' => $data['title'],
-                    'content' => base64_encode($data['content'])
-                ]
-            ],
-        ]));
+                'title' => $data['title'],
+                'content' => base64_encode($data['content'])
+            ]
+        ];
 
-        if ($result['code'] != 0) {
-            $this->activityModel->updateStatus($id);
+        // 数据发送
+        $response = $this->http($url, 'post', json_encode($pdata));
+        $result   = json_decode($response, true);
+
+        // 如果没数据则游戏服务端有问题
+        if (count($result) == 0) {
             return [
                 'code' => 1,
                 'msg' => 'failed'
             ];
+        }
+
+        $info = $result['data'];
+        foreach ($info as $key => $value) {
+            // 收到服务端数据后更新活动状态
+            // 1: 失败 0: 成功
+            if ($value['code'] == 1) {
+                $this->activityModel->updateStatus($value['id']);
+            }
         }
 
         return ['code' => 0, 'msg' => 'success'];
