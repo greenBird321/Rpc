@@ -253,7 +253,15 @@ class Activity extends Model
 
     public function getActivityList($zone)
     {
-        $sql = "SELECT `title`, `content` FROM `ML_activity` WHERE `zone` IN ($zone, 0)";
+        $sql = "SELECT
+	a.`title`,
+	a.`content` ,
+	a.`create_time`
+FROM
+	`ML_activity`  a
+WHERE
+	a.`zone` IN ( $zone, 0 ) 
+	and  not  EXISTS ( select null from ML_activity t where t.title= a.title and t.create_time>a.create_time)";
         return $this->db_data->fetchAll($sql);
     }
 

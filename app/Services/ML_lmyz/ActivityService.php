@@ -57,7 +57,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
         ];
 
         // 数据发送
-        $response = $this->http($url, 'post', json_encode($pdata));
+        $response = $this->post($url, json_encode($pdata));
         $result   = json_decode($response, true);
 
         // 如果没数据则游戏服务端有问题
@@ -72,7 +72,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
         foreach ($info as $key => $value) {
             // 收到服务端数据后更新活动状态
             // 1: 失败 0: 成功
-            if ($value['code'] == 1) {
+            if ($value['code'] != 0) {
                 $this->activityModel->updateStatus($value['id']);
             }
         }
@@ -86,6 +86,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
     public function game($parameter)
     {
         $result = $this->activityModel->getActivityList($parameter['zone']);
+        
         if (empty($result)) {
             return ['code' => 1, 'msg' => 'failed'];
         }
@@ -128,50 +129,46 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
         );
     }
 
-
     /**
      * 发送请求
-     * @param $method
      * @param $url
      * @param $data
      */
-    public function http($url, $method, $postData = NULL)
-    {
+    public function post($url, $data) {
+
+        //初使化init方法
         $ch = curl_init();
 
-        //curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_USERAGENT, '');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_ENCODING, "");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // 强制访问ipv4地址，如果访问ipv6, namelookup_time时间会过长
-        curl_setopt($ch, CURLOPT_HEADER, false);    // 是否返回头信息
-        // curl_setopt($ch, CURLOPT_HEADERFUNCTION, array($this, 'getHeader')); //回调
-
-
-        // set data & url
-        switch ($method) {
-            case 'POST':
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-                break;
-            case 'GET':
-                if (!empty($this->postData)) {
-                    $this->url = "{$this->url}?" . http_build_query($postData);
-                }
-                break;
-        }
+        //指定URL
         curl_setopt($ch, CURLOPT_URL, $url);
 
-        // execute
-        $response = curl_exec($ch);
+        //设定请求后返回结果
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
+        //声明使用POST方式来进行发送
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        //发送什么数据呢
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+
+        //忽略证书
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        //忽略header头信息
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+
+        //设置超时时间
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        //发送请求
+        $output = curl_exec($ch);
+
+        //关闭curl
         curl_close($ch);
 
-        return $response;
-
+        //返回数据
+        return $output;
     }
 }
