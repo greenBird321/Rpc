@@ -61,7 +61,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
         $result   = json_decode($response, true);
 
         // 如果没数据则游戏服务端有问题
-        if (count($result) == 0) {
+        if (empty($result)) {
             return [
                 'code' => 1,
                 'msg' => 'failed'
@@ -165,13 +165,6 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
                 break;
         }
         curl_setopt($ch, CURLOPT_URL, $url);
-
-
-        // set headers
-        if ($this->headers) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, []);
-            curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);
-        }
 
         // execute
         $response = curl_exec($ch);
