@@ -147,4 +147,31 @@ WHERE
             ]
         ];
     }
+
+
+    public function getGuildNews($parameter)
+    {
+        if (!isset($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        try{
+            $sql = "SELECT NewsType, NewsParam, `Timestamp` FROM `GuildNews` WHERE GuildID={$parameter['guild_id']} ORDER BY `Timestamp` DESC";
+            $news = $this->gameDb($parameter['zone'].'_guild')->fetchAll($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $news
+        ];
+    }
 }

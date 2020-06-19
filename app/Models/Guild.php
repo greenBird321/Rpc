@@ -34,4 +34,9 @@ WHERE
 
         return $result;
     }
+
+//    public function getGuildNewsByGuildId($guildId)
+//    {
+//
+//    }
 }

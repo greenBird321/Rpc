@@ -9,10 +9,19 @@ namespace Xt\Rpc\Controllers;
 
 class GuildController extends ControllerBase {
 
-    public function getGuild() {
-        $parameter['zone'] = $this->request->query->get('zone');
-        $parameter['guild_id'] = $this->request->query->get('guild_id');
+    public function getGuild()
+    {
+        $parameter['zone']       = $this->request->query->get('zone');
+        $parameter['guild_id']   = $this->request->query->get('guild_id');
         $parameter['guild_name'] = $this->request->query->get('guild_name');
+
+        return $this->api('Guild', __FUNCTION__, $parameter);
+    }
+
+    public function getGuildNews()
+    {
+        $parameter['zone']     = $this->request->query->get('zone');
+        $parameter['guild_id'] = $this->request->query->get('guild_id');
 
         return $this->api('Guild', __FUNCTION__, $parameter);
     }

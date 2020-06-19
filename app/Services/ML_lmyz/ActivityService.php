@@ -86,7 +86,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
     public function game($parameter)
     {
         $result = $this->activityModel->getActivityList($parameter['zone']);
-        
+
         if (empty($result)) {
             return ['code' => 1, 'msg' => 'failed'];
         }
