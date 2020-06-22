@@ -224,7 +224,7 @@ class Activity extends Model
                 }
                 $last_id = $this->db_data->lastInsertId();
                 $zid[]   = [
-                    'zone' => $value,
+                    'zone' => intval($value),
                     'id' => $last_id
                 ];
             }
@@ -244,7 +244,7 @@ class Activity extends Model
 
             $last_id = $this->db_data->lastInsertId();
             $zid[]   = [
-                'zone' => $parameter['zone'],
+                'zone' => intval($parameter['zone']),
                 'id' => $last_id
             ];
             return $zid;

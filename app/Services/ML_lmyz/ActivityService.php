@@ -33,7 +33,7 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
     public function import($parameter)
     {
         $data['title']       = $parameter['title'];
-        $data['content']     = $parameter['content'];
+        $data['content']     = base64_decode($parameter['content']);
         $data['zone']        = $parameter['zone'];
         $data['create_time'] = date('Y-m-d H:i:s', time());
         $url                 = $this->di['db_cfg']['game_url']['award_url'];
@@ -51,25 +51,26 @@ class ActivityService extends \Xt\Rpc\Services\XT_app\ActivityService
             'msg' => 'success',
             'zones' => $zones,
             'data' => [
+                [
                 'title' => $data['title'],
-                'content' => base64_encode($data['content'])
+                'content' => str_replace(' ', '+', $parameter['content']),
+                ]
             ]
         ];
 
         // 数据发送
         $response = $this->post($url, json_encode($pdata));
         $result   = json_decode($response, true);
-
+        
         // 如果没数据则游戏服务端有问题
-        if (empty($result)) {
+        if (empty($result['data'])) {
             return [
                 'code' => 1,
                 'msg' => 'failed'
             ];
         }
 
-        $info = $result['data'];
-        foreach ($info as $key => $value) {
+        foreach ($result as $key => $value) {
             // 收到服务端数据后更新活动状态
             // 1: 失败 0: 成功
             if ($value['code'] != 0) {

@@ -39,4 +39,20 @@ class StatsController extends ControllerBase
         $parameter['serverId'] = $this->request->query->get('server_id');
         return $this->api("Stats", __FUNCTION__, $parameter);
     }
+
+    /**
+     * 统计玩家通关
+     * @api {get} /stats/userPassLevel 统计玩家通关
+     * @apiGroup stats
+     * @apiName userPassLevel
+     * @ apiParam {String} date 日期
+     * @ apiParam {String} server_id 服务器id
+     */
+    public function userPassLevel()
+    {
+        $parameter['start']    = $this->request->query->get('start');
+        $parameter['end']      = $this->request->query->get('end');
+        $parameter['serverId'] = $this->request->query->get('server_id');
+        return $this->api("Stats", __FUNCTION__, $parameter);
+    }
 }

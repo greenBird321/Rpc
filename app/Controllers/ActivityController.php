@@ -447,7 +447,7 @@ class ActivityController extends ControllerBase
     public function import()
     {
         $parameter['title'] = $this->request->query->get('title');
-        $parameter['content'] = base64_decode($this->request->query->get('content'));
+        $parameter['content'] = $this->request->query->get('content');
         $parameter['zone'] = $this->request->query->get('zone');
         return $this->api('Activity', 'import', $parameter);
     }

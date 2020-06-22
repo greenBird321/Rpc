@@ -75,4 +75,89 @@ class StatsService extends Service
     {
     }
 
+    /**
+     * 玩家关卡通过
+     */
+    public function userPassLevel($parameter)
+    {
+        $start = $parameter['start'];
+        $end = $parameter['end'];
+
+        try {
+            // 查询玩家总数
+            $total_sql = "SELECT
+	COUNT(
+	DISTINCT ( RoleID )) totalUser
+FROM
+	AreaStage 
+WHERE
+	`Status` IN (
+		0,
+	1) AND PassTime BETWEEN {$start} AND {$end}
+" ;
+            $total = $this->gameDb($parameter['serverId'])->fetchAssoc($total_sql);
+            // 查询所有关卡
+            $levelInfo_sql = "SELECT
+	count( 1 ) passUser,
+	aa.AreaID 
+FROM
+	(
+	SELECT
+		count( 1 ),
+		RoleID,
+		AreaID 
+	FROM
+		AreaStage 
+	WHERE
+		`Status` = 1 
+		AND PassTime BETWEEN {$start} 
+		AND {$end} 
+	GROUP BY
+		RoleID,
+		AreaID 
+	) aa 
+GROUP BY
+	aa.AreaID";
+            $level_info = $this->gameDb($parameter['serverId'])->fetchAll($levelInfo_sql);
+            // 查询关卡通过数
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        // 如果没有新增玩家
+        if (empty($total['totalUser']) || empty($level_info)) {
+            // 查询最高关卡并且补充数据
+            $nodata_sql = "	SELECT MAX(AreaID) areaId FROM AreaStage";
+            $levelId = $this->gameDb($parameter['serverId'])->fetchAssoc($nodata_sql);
+
+            for($i = 1; $i <= $levelId['areaId']; $i++) {
+                $levelInfo[] = [
+                    'total' => $total['totalUser'],
+                    'levelId' => $i,
+                    'userCount' => '-',
+                    'userMix' => '-'
+                ];
+            }
+
+            return [
+                'code' => 0,
+                'msg' => 'success',
+                'data' => [
+                    'info' => $levelInfo,
+                ],
+            ];
+
+        }
+
+        // 处理数据正常
+        foreach ($level_info as $key => $value) {
+            $userMix = sprintf("%.4f",$value['passUser'] / $total['totalUser']) * 100 . '%';
+            $level_info[$key]['userMix'] = $userMix;
+        }
+
+        dump($level_info);exit;
+    }
 }
