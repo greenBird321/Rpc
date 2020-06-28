@@ -80,8 +80,9 @@ class StatsService extends Service
      */
     public function userPassLevel($parameter)
     {
-        $start = $parameter['start'];
-        $end = $parameter['end'];
+        $start    = $parameter['start'];
+        $end      = $parameter['end'];
+        $serverId = $parameter['serverId'];
 
         try {
             // 查询玩家总数
@@ -95,7 +96,7 @@ WHERE
 		0,
 	1) AND PassTime BETWEEN {$start} AND {$end}
 " ;
-            $total = $this->gameDb($parameter['serverId'])->fetchAssoc($total_sql);
+            $total = $this->gameDb($serverId)->fetchAssoc($total_sql);
             // 查询所有关卡
             $levelInfo_sql = "SELECT
 	count( 1 ) passUser,
@@ -118,7 +119,10 @@ FROM
 	) aa 
 GROUP BY
 	aa.AreaID";
-            $level_info = $this->gameDb($parameter['serverId'])->fetchAll($levelInfo_sql);
+            $level_info = $this->gameDb($serverId)->fetchAll($levelInfo_sql);
+
+            $server_sql = "SELECT `Name` serverName FROM ServerRegion WHERE ServerId = {$serverId}";
+            $serverName = $this->gameDb($serverId)->fetchAssoc($server_sql);
             // 查询关卡通过数
         } catch (\Exception $e) {
             return [
@@ -135,19 +139,18 @@ GROUP BY
 
             for($i = 1; $i <= $levelId['areaId']; $i++) {
                 $levelInfo[] = [
-                    'total' => $total['totalUser'],
+                    'serverName' => $serverName['serverName'],
+                    'total' => intval($total['totalUser']),
                     'levelId' => $i,
-                    'userCount' => '-',
-                    'userMix' => '-'
+                    'userCount' => 0,
+                    'userMix' => 0,
                 ];
             }
 
             return [
                 'code' => 0,
                 'msg' => 'success',
-                'data' => [
-                    'info' => $levelInfo,
-                ],
+                'data' => $levelInfo,
             ];
 
         }
@@ -155,9 +158,19 @@ GROUP BY
         // 处理数据正常
         foreach ($level_info as $key => $value) {
             $userMix = sprintf("%.4f",$value['passUser'] / $total['totalUser']) * 100 . '%';
-            $level_info[$key]['userMix'] = $userMix;
+            $data[] = [
+                'serverName' => $serverName['serverName'],
+                'total' => $total['totalUser'],
+                'levelId' => $value['AreaID'],
+                'userCount' => $value['passUser'],
+                'userMix' => $userMix
+            ];
         }
 
-        dump($level_info);exit;
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $data
+        ];
     }
 }

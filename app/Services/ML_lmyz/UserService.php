@@ -229,4 +229,59 @@ WHERE
             'data' => $attribute
         ];
     }
+
+
+    /**
+     * 只查询用户name
+     * @param $parameter
+     */
+    public function userinfo($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        $sql = "";
+        if (!empty($parameter['name'])) {
+            $sql = "SELECT
+	Account.PlatformUID,
+	BasicRes.`name`,
+	Account.RoleID 
+FROM
+	Account,
+	BasicRes 
+WHERE
+	Account.RoleID = BasicRes.RoleID 
+	AND BasicRes.`name` = '{$parameter['name']}'";
+        } else {
+            $sql = "SELECT
+	Account.PlatformUID,
+	BasicRes.`name`,
+	Account.RoleID 
+FROM
+	Account,
+	BasicRes 
+WHERE
+	Account.RoleID = BasicRes.RoleID 
+	AND Account.RoleID = {$parameter['role_id']}";
+        }
+
+        try {
+            $data = $this->gameDb($parameter['zone'])->fetchAll($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $data[0],
+        ];
+    }
 }

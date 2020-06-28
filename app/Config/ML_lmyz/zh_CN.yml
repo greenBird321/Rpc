@@ -1,6 +1,9 @@
 setting:
   timezone  : Asia/Shanghai
 
+game_url:
+  award_url: http://148.70.170.239:8089/ActivityRefresh
+
 zone_list:
    adapter : mysql
    host    : 127.0.0.1
@@ -8,4 +11,31 @@ zone_list:
    user    : root
    pass    : root
    db      : lmyz
+   charset : utf8mb4
+
+1:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : lmyz
+   charset : utf8mb4
+
+1_log:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : lmyz_log
+   charset : utf8mb4
+
+1_guild:
+   adapter : mysql
+   host    : 127.0.0.1
+   port    : 3306
+   user    : root
+   pass    : root
+   db      : lmyz_guild
    charset : utf8mb4

@@ -53,9 +53,9 @@ class UserController extends ControllerBase
      */
     public function profile()
     {
-        $parameter['zone'] = $this->request->query->get('zone');
-        $parameter['user_id'] = $this->request->query->get('user_id');
-        $parameter['name'] = $this->request->query->get('name');
+        $parameter['zone']       = $this->request->query->get('zone');
+        $parameter['user_id']    = $this->request->query->get('user_id');
+        $parameter['name']       = $this->request->query->get('name');
         $parameter['account_id'] = $this->request->query->get('account_id');
         return $this->api('User', __FUNCTION__, $parameter);
     }
@@ -88,10 +88,22 @@ class UserController extends ControllerBase
      */
     public function propinfo()
     {
-        $parameter['zone'] = $this->request->query->get('zone');
-        $parameter['user_id'] = $this->request->query->get('user_id');
+        $parameter['zone']      = $this->request->query->get('zone');
+        $parameter['user_id']   = $this->request->query->get('user_id');
         $parameter['action_id'] = $this->request->query->get('action_id');
-        $parameter['status'] = $this->request->query->get('status');
+        $parameter['status']    = $this->request->query->get('status');
+
+        return $this->api('User', __FUNCTION__, $parameter);
+    }
+
+    /**
+     * 查询玩家的账号id
+     */
+    public function userinfo()
+    {
+        $parameter['zone']    = $this->request->query->get('zone');
+        $parameter['name']    = $this->request->query->get('name');
+        $parameter['role_id'] = $this->request->query->get('role_id');
 
         return $this->api('User', __FUNCTION__, $parameter);
     }
