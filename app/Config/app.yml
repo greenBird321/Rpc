@@ -1,7 +1,7 @@
 setting:
   sandbox     : true
   request_log : false
-  timezone    : UTC
+  timezone    : PRC
   secret_key  : xxxxxxxxxxxxxxxx
   default     : 1001001|XT_app|zh_CN
 
@@ -15,22 +15,32 @@ db_data:
     charset   : utf8
 
 db_logs:
-    adapter   :
-    host      :
-    port      :
-    user      :
-    pass      :
-    db        :
-    charset   :
+    adapter   : mysql
+    host      : 127.0.0.1
+    port      : 3306
+    user      : root
+    pass      : root
+    db        : v3_logs
+    charset   : utf8mb4
 
 db_trade:
-    adapter   : Mysql
-    host      : 192.168.3.9
+    adapter   : mysql
+    host      : 127.0.0.1
     port      : 3306
-    user      : cn_trade
-    pass      : JTVRIyJ8l6EqGjED
-    db        : cn_trade
+    user      : root
+    pass      : root
+    db        : v3-trade
     charset   : utf8mb4
+
+
+db_account:
+  adapter   : mysql
+  host      : 127.0.0.1
+  port      : 3306
+  user      : root
+  pass      : root
+  db        : v3-account
+  charset   : utf8mb4
 
 redis:
     host      : 127.0.0.1

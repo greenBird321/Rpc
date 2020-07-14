@@ -145,6 +145,20 @@ $di['db_trade'] = function ($di) {
     return $conn;
 };
 
+$di['db_account'] = function ($di) {
+    $params = array(
+        'driver'   => 'pdo_' . $di['config']['db_account']['adapter'],
+        'host'     => $di['config']['db_account']['host'],
+        'port'     => $di['config']['db_account']['port'],
+        'user'     => $di['config']['db_account']['user'],
+        'password' => $di['config']['db_account']['pass'],
+        'dbname'   => $di['config']['db_account']['db'],
+        'charset'  => $di['config']['db_account']['charset'],
+    );
+    $conn = DriverManager::getConnection($params);
+    return $conn;
+};
+
 $di['redis'] = function ($di) {
     $redis = new \Redis();
     $redis->connect($di['config']['redis']['host'], $di['config']['redis']['port']);
