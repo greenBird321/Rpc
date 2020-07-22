@@ -255,13 +255,14 @@ class Activity extends Model
     {
         $sql = "SELECT
 	a.`title`,
-	a.`content` ,
-	a.`create_time`
+	a.`content`,
+	a.`create_time` 
 FROM
-	`ML_activity`  a
+	( SELECT * FROM `ML_activity` ORDER BY create_time ) a 
 WHERE
-	a.`zone` IN ( $zone, 0 ) 
-	and  not  EXISTS ( select null from ML_activity t where t.title= a.title and t.create_time>a.create_time)";
+	a.zone IN ( {$zone}, 0 ) 
+GROUP BY
+	a.title";
         return $this->db_data->fetchAll($sql);
     }
 
