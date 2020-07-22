@@ -254,15 +254,18 @@ class Activity extends Model
     public function getActivityList($zone)
     {
         $sql = "SELECT
-	a.`title`,
-	a.`content`,
-	a.`create_time` 
+	a.title,
+	a.content,
+	a.create_time 
 FROM
-	( SELECT * FROM `ML_activity` ORDER BY create_time ) a 
+	ML_activity AS a,
+	(
+		SELECT title,MAX(create_time) max_time FROM ML_activity WHERE zone={$zone} GROUP BY title
+	) b 
 WHERE
-	a.zone IN ( {$zone}, 0 ) 
-GROUP BY
-	a.title";
+	a.title = b.title 
+	AND a.create_time = b.max_time 
+	GROUP BY a.title";
         return $this->db_data->fetchAll($sql);
     }
 
