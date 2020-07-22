@@ -265,6 +265,7 @@ FROM
 WHERE
 	a.title = b.title 
 	AND a.create_time = b.max_time 
+	AND a.zone={$zone}
 	GROUP BY a.title";
         return $this->db_data->fetchAll($sql);
     }
