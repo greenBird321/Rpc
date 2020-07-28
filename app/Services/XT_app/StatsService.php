@@ -122,7 +122,7 @@ GROUP BY
             $level_info = $this->gameDb($serverId)->fetchAll($levelInfo_sql);
 
             $server_sql = "SELECT `Name` serverName FROM ServerRegion WHERE ServerId = {$serverId}";
-            $serverName = $this->gameDb($serverId)->fetchAssoc($server_sql);
+            $serverName = $this->gameDb('zone_list')->fetchAssoc($server_sql);
             // 查询关卡通过数
         } catch (\Exception $e) {
             return [
