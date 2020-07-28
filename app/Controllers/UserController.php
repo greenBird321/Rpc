@@ -107,4 +107,30 @@ class UserController extends ControllerBase
 
         return $this->api('User', __FUNCTION__, $parameter);
     }
+
+    public function getRoleId()
+    {
+        $paramter['zone']       = $this->request->query->get('zone');
+        $paramter['account_id'] = $this->request->query->get('account_id');
+        $paramter['user_name']  = $this->request->query->get('user_name');
+
+        return $this->api('User', __FUNCTION__, $paramter);
+    }
+
+    public function getAccountId()
+    {
+        $paramter['zone']    = $this->request->query->get('zone');
+        $paramter['role_id'] = $this->request->query->get('role_id');
+        $paramter['name']    = $this->request->query->get('name');
+
+        return $this->api('User', __FUNCTION__, $paramter);
+    }
+
+    public function playerOffline()
+    {
+        $paramter['zone']    = $this->request->query->get('zone');
+        $paramter['role_id'] = $this->request->query->get('role_id');
+
+        return $this->api('User', __FUNCTION__, $paramter);
+    }
 }

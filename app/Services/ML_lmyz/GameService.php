@@ -73,10 +73,9 @@ ORDER BY
         try {
             $sql = "
 SELECT
-	ActionTime,
 	Action,
 	ItemId,
-	ItemNum buy_propNum
+	sum(ItemNum) buy_propNum
 FROM
 	ItemLog 
 WHERE
@@ -84,7 +83,10 @@ WHERE
 	AND Action IN ( 100001, 100002, 100005, 100011, 100012 ) 
 	AND ActionTime BETWEEN {$start} 
 	AND {$end} 
-
+	GROUP BY
+	Action,ItemId
+	ORDER BY
+	buy_propNum DESC
 ";
 
             $result = $this->gameDb($parameter['serverId'] . '_log')->fetchAll($sql);
@@ -94,6 +96,50 @@ WHERE
                 'msg' => 'failed'
             ];
         }
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $result
+        ];
+    }
+
+    public function productRanking($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        $start = strtotime($parameter['start']);
+        $end   = strtotime($parameter['end']);
+
+        try {
+            $sql = "SELECT
+	Action,
+	ItemId ,
+	SUM( ItemNum ) buy_num
+FROM
+	`ItemLog` 
+WHERE
+	GetItem = 1 
+	AND Action IN ( 100001, 100002, 100005, 100011, 100012 ) 
+	AND ActionTime BETWEEN {$start} 
+	AND {$end} 
+GROUP BY
+	ItemId 
+ORDER BY
+	buy_num DESC 
+	LIMIT 50";
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        $result = $this->gameDb($parameter['zone'] . '_log')->fetchAll($sql);
 
         return [
             'code' => 0,
@@ -399,6 +445,140 @@ WHERE
                 'msg' => 'failed'
             ];
         }
+    }
+
+    public function realtimeOnline($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        $start = $parameter['start'];
+        $end   = $parameter['end'];
+
+        try {
+            $sql    = "SELECT
+	FROM_UNIXTIME( LogTime) times,
+	OnlineNum 
+FROM
+	OnlineRecord 
+WHERE
+	LogTime >= {$start}
+	AND LogTime <= {$end}
+	LIMIT 1";
+            $online = $this->gameDb($parameter['zone'] . '_log')->fetchAssoc($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        // 游戏心跳失败或者数据库错误
+        if (!$online) {
+            return [
+                'code' => 0,
+                'msg' => 'success',
+                'data' => [
+                    'server' => $parameter['zone'],
+                    'time' => date('Y-m-d H:i:s', $start),
+                    'OnlineNum' => 0,
+                ]
+            ];
+        } else {
+            return [
+                'code' => 0,
+                'msg' => 'success',
+                'data' => [
+                    'server' => $parameter['zone'],
+                    'time' => $online['times'],
+                    'OnlineNum' => $online['OnlineNum']
+                ],
+            ];
+        }
+    }
+
+    public function historyOnline($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        $start = $parameter['start'];
+        $end   = $parameter['end'];
+
+        try {
+            $sql = "SELECT
+	DATE_FORMAT( FROM_UNIXTIME( LogTime, '%Y-%m-%d %H:%i:%s' ), '%Y-%m-%d %H' ) hours,
+	Max( OnlineNum )  max_user_online,
+	MIN( OnlineNum )  min_user_online
+FROM
+	OnlineRecord 
+WHERE
+	LogTime BETWEEN {$start}
+	AND {$end}
+GROUP BY
+	hours";
+            $historyData = $this->gameDb($parameter['zone']. '_log')->fetchAll($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        $result = [];
+        // 整理输出格式
+        foreach ($historyData as $key => $value) {
+            $result[$key]['server'] = $parameter['zone'];
+            $result[$key]['hours'] = $value['hours'];
+            $result[$key]['max_user_online'] = $value['max_user_online'];
+            $result[$key]['min_user_online'] = $value['min_user_online'];
+        }
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $result,
+        ];
+    }
+
+    public function addBanChatPlayer($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        // 增加禁言用户: type = 1 移除禁言用户: type = 2 增加账号封禁: type = 3
+        $parameter['type'] = 1;
+        $url = $this->di['db_cfg']['game_url']['banchat_url'];
+        dump($url, json_encode($parameter, true));exit;
+        $response = $this->post($url, json_encode($parameter, true));
+        return $response;
+    }
+
+    public function removeBanPlayer($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        // 增加禁言用户: type = 1 移除禁言用户: type = 2 玩家踢下线: type = 3
+        $parameter['type'] = 2;
+        $parameter['start_time'] = '';
+        $parameter['end_time'] = '';
+        $url = $this->di['db_cfg']['game_url']['banchat_url'];
+        dump($url, json_encode($parameter, true));exit;
+        $response = $this->post($url,json_encode($parameter, true));
+        return $response;
     }
 
     /**

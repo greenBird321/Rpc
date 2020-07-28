@@ -284,4 +284,141 @@ WHERE
             'data' => $data[0],
         ];
     }
+
+    /**
+     * 通过account_id或者角色名称换取role_id
+     */
+    public function getRoleId($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        try {
+            if (!empty($parameter['account_id'])) {
+                // 通过account_id查询role_id
+                $sql = "SELECT RoleID FROM `Account` WHERE PlatformUID = {$parameter['account_id']}";
+            } else if (!empty($parameter['user_name'])) {
+                // 通过用户名查询role_id
+                $sql = "SELECT RoleID FROM `BasicRes` WHERE `name`='{$parameter['user_name']}'";
+            }
+
+            $result = $this->gameDb($parameter['zone'])->fetchAssoc($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $result
+        ];
+    }
+
+    public function playerOffline($parameter)
+    {
+        if (empty($paramter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        // 增加禁言用户: type = 1 移除禁言用户: type = 2 玩家踢下线: type = 3
+        $send['type'] = 3;
+        $send['role_id'] = $paramter['role_id'];
+        $send['start_time'] = '';
+        $send['end_time'] = '';
+        $url = $this->di['db_cfg']['game_url']['banchat_url'];
+        dump($url);exit;
+        $response = $this->post($url, json_encode($send, true));
+        return $response;
+    }
+
+    // 获取账号id
+    public function getAccountId($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        try {
+            if (!empty($parameter['role_id'])) {
+                $sql = "SELECT `PlatformUID` FROM `Account` WHERE `RoleID`={$parameter['role_id']}";
+            } elseif (!empty($parameter['name'])) {
+                $sql = "SELECT
+	a.`PlatformUID` 
+FROM
+`Account` a
+	LEFT JOIN `BasicRes` b ON a.`RoleID` = b.`RoleID` 
+	AND b.`name` = '{$parameter['name']}'";
+            }
+
+            $result = $this->gameDb($parameter['zone'])->fetchAssoc($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $result
+        ];
+    }
+
+    /**
+     * 发送请求
+     * @param $url
+     * @param $data
+     */
+    public function post($url, $data)
+    {
+
+        //初使化init方法
+        $ch = curl_init();
+
+        //指定URL
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        //设定请求后返回结果
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        //声明使用POST方式来进行发送
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        //发送什么数据呢
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+
+        //忽略证书
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        //忽略header头信息
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+
+        //设置超时时间
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        //发送请求
+        $output = curl_exec($ch);
+
+        //关闭curl
+        curl_close($ch);
+
+        //返回数据
+        return $output;
+    }
 }

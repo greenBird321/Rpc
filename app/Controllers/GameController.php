@@ -151,4 +151,49 @@ class GameController extends ControllerBase
 
         return $this->api('Game', __FUNCTION__, $parameter);
     }
+
+    public function realtimeOnline()
+    {
+        $parameter['zone']  = $this->request->query->get('zone');
+        $parameter['start'] = $this->request->query->get('start');
+        $parameter['end']   = $this->request->query->get('end');
+
+        return $this->api('Game', __FUNCTION__, $parameter);
+    }
+
+    public function historyOnline()
+    {
+        $parameter['zone']  = $this->request->query->get('zone');
+        $parameter['start'] = $this->request->query->get('start');
+        $parameter['end']   = $this->request->query->get('end');
+
+        return $this->api('Game', __FUNCTION__, $parameter);
+    }
+
+    public function productRanking()
+    {
+        $parameter['zone']  = $this->request->query->get('zone');
+        $parameter['start'] = $this->request->query->get('start');
+        $parameter['end']   = $this->request->query->get('end');
+
+        return $this->api('Game', __FUNCTION__, $parameter);
+    }
+
+    public function addBanChatPlayer()
+    {
+        $parameter['zone']       = $this->request->query->get('server_id');
+        $parameter['role_id']    = $this->request->query->get('role_id');
+        $parameter['start_time'] = $this->request->query->get('start_time');
+        $parameter['end_time']   = $this->request->query->get('end_time');
+
+        return $this->api('Game', __FUNCTION__, $parameter);
+    }
+
+    public function removeBanPlayer()
+    {
+        $parameter['role_id'] = $this->request->query->get('role_id');
+        $parameter['zone'] = $this->request->query->get('server_id');
+
+        return $this->api('Game', __FUNCTION__, $parameter);
+    }
 }
