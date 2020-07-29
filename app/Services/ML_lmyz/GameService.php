@@ -556,9 +556,12 @@ GROUP BY
         }
         // 增加禁言用户: type = 1 移除禁言用户: type = 2 增加账号封禁: type = 3
         $parameter['type'] = 1;
+        $send_data = [
+            'data' => $parameter
+        ];
         $url = $this->di['db_cfg']['game_url']['banchat_url'];
-        dump($url, json_encode($parameter, true));exit;
-        $response = $this->post($url, json_encode($parameter, true));
+        dump($url, json_encode($send_data, true));exit;
+        $response = $this->post($url, json_encode($send_data, true));
         return $response;
     }
 
@@ -576,8 +579,11 @@ GROUP BY
         $parameter['start_time'] = '';
         $parameter['end_time'] = '';
         $url = $this->di['db_cfg']['game_url']['banchat_url'];
+        $send_data = [
+            'data' => $parameter
+        ];
         dump($url, json_encode($parameter, true));exit;
-        $response = $this->post($url,json_encode($parameter, true));
+        $response = $this->post($url,json_encode($send_data, true));
         return $response;
     }
 
