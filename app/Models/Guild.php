@@ -20,13 +20,13 @@ class Guild extends Model {
             $roles_id = $role_id;
         }
         // 目前只查出玩家的name
-        $sql = "SELECT `RoleID`,`name`, `PlayerLv`, `MPower`,`LogoutTime`
+        $sql = "SELECT `RoleID`,`PlayerName`, `PlayerLevel`, `FightPow5Hero`,`CreateTime`
 FROM
 	BasicRes 
 WHERE
 	RoleID IN (
 		{$roles_id}
-	)";
+    )";
         $result = $db->fetchAll($sql);
         if (empty($result)) {
             return false;

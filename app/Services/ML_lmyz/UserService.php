@@ -173,7 +173,7 @@ WHERE
             $result['demonWeeklyRank'] = trim($value['DemonWeeklyRank'], ';');                                  // 心魔周榜积分
             $result['areaLastStage']   = trim($value['AreaLastStage'], ';');                                    // 最后通关关卡
             $result['luckDraw']        = trim($value['LuckDraw'], ';');                                         // 抽卡统计
-            $result['logoutTime']      = date('Y-m-d H:i:s', trim($value['LogoutTime'], ';'));                  // 登出时间
+            $result['LogoutTime']      = date('Y-m-d H:i:s', trim($value['LogoutTime'], ';'));                  // 登出时间
             $result['mPower']          = explode(';', $value['FightPow5Hero'])[0];                              // 战力
             $result['device']          = $deviceType[trim($value['Device'], ';')];                              // 设备系统
             $result['device_id']       = $value['DeviceID'];                                                    // 设备id

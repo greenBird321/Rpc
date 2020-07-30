@@ -108,7 +108,6 @@ WHERE
             }
             $r[$key]['CreateTime'] = date('Y-m-d H:i:s');
         }
-
         // 通过role_id查询玩家详细信息
         $role = $this->guildModel->getRoleByRolesId($role_id, $this->gameDb($parameter['zone']));
         // 通过role_id查询创建人信息
@@ -119,25 +118,24 @@ WHERE
                 'msg' => 'failed'
             ];
         }
-
         $player = [];
         // 拼装公会成员属性
         foreach ($r as $k => $v) {
             foreach ($role as $i => $j) {
                 if ($v['RoleID'] == $j['RoleID']) {
-                    $player[$k]['PlayerName'] = $j['name'];
-                    $player[$k]['PlayerLv'] = $j['PlayerLv'];
-                    $player[$k]['MPower'] = $j['MPower'];
-                    $player[$k]['Logout_time'] = date('Y-m-d H:i:s', $j['LogoutTime']);
+                    $player[$k]['PlayerName'] = trim($j['PlayerName'], ';');
+                    $player[$k]['PlayerLv'] = explode(';', $j['PlayerLevel'])[0];
+                    $player[$k]['MPower'] = empty($j['FightPow5Hero']) ? '' : explode(';', $j['FightPow5Hero'])[0];
+                    $player[$k]['Create_time'] = date('Y-m-d H:i:s', trim($j['CreateTime'], ';'));
                     $player[$k]['GuildGrade'] = $v['GuildGrade'];
                 }
 
                 if ($v['CreaterID'] == $creater[0]['RoleID']) {
-                    $r[$k]['CreaterName'] = $creater[0]['name'];
+                    $r[$k]['CreaterName'] = trim($creater[0]['PlayerName'], ';');
                 }
             }
         }
-
+        
         return [
             'code' => 0,
             'msg' => 'success',
