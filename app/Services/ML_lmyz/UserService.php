@@ -78,7 +78,7 @@ FROM
 	LEFT JOIN Item ON Account.RoleID = Item.RoleID 
 WHERE
 	Account.RoleID = ?";
-                $attribute = $this->gameDb($parameter['zone'])->fetchAll($sql, [$parameter['user_id']]);
+                $attribute = $this->gameDb(trim($parameter['zone'], ';'))->fetchAll($sql, [$parameter['user_id']]);
             } elseif (!empty($parameter['account_id'])) {
                 $sql = "SELECT
 	Account.RoleID,
@@ -111,7 +111,7 @@ FROM
 	LEFT JOIN Item ON Account.RoleID = Item.RoleID 
 WHERE
 	Account.PlatformUID = ?";
-                $attribute = $this->gameDb($parameter['zone'])->fetchAll($sql, [$parameter['account_id']]);
+                $attribute = $this->gameDb(trim($parameter['zone'], ';'))->fetchAll($sql, [$parameter['account_id']]);
             } elseif (!empty($parameter['name'])) {
                 $sql = "SELECT
 	Account.RoleID,
@@ -144,7 +144,7 @@ FROM
 	LEFT JOIN Item ON Account.RoleID = Item.RoleID
 WHERE
 	BasicRes.name = ?";;
-                $attribute = $this->gameDb($parameter['zone'])->fetchAll($sql, [$parameter['name']]);
+                $attribute = $this->gameDb(trim($parameter['zone'], ';'))->fetchAll($sql, [$parameter['name']]);
             }
 
         if (!$attribute) {
