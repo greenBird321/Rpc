@@ -37,61 +37,122 @@ class PropService extends \Xt\Rpc\Services\HT_haizei\PropService
             return ['code' => 1, 'msg' => 'missing paraneter'];
         }
 
-        $award_url = $parameter['award_url'];
-
-        $server_id = $parameter['zone'];
+        $award_url = $this->di['db_cfg']['game_url']['award_url'];
+        $server = $parameter['zone'];
         $title     = $parameter['title'];
-        $msg       = $parameter['msg'];
-        $send      = $parameter['attach'];
+        $content   = $parameter['msg'];
+        $prop      = $parameter['attach'];
 
-        $award_param = json_encode([
-            'zone' => $server_id,
-            'data' => $send,
-            'title' => $title,
-            'content' => $msg
-        ]);
+        if (strpos($prop, ',')) {
+            $prop = explode(',', $prop);
+        }
+
+        if (strpos($server, ',')) {
+            $server = explode(',', $server);
+        }
+
+        $award_param = [
+            'data' => [
+                'serverId' => $server,
+                'prop' => $prop,
+                'title' => $title,
+                'content' => $content
+            ],
+        ];
+        dump($award_param);exit;
         // 请求服务端api
-        $result = $this->CurlGame('post', $award_url, $award_param);
-        if ($result['code'] == 0) {
+        $response = $this->post($award_url, json_encode($award_param, true));
+        if (json_decode($response['code']) == 0) {
             return ['code' => 0, 'msg' => 'success'];
         } else {
             return ['code' => 1, 'msg' => 'failed'];
         }
     }
 
-    /**
-     * 发送Http请求
-     * @param $method
-     * @param $url
-     * @param $param
-     * @return mixed
-     */
-    protected function CurlGame($method, $url, $param)
+    // 单用户发邮件 type = 1; 区服邮件 type = 2
+    public function mail($parameter)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_USERAGENT, '');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_ENCODING, "");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4); // 强制访问ipv4地址，如果访问ipv6, namelookup_time时间会过长
-        curl_setopt($ch, CURLOPT_HEADER, false);    // 是否返回头信息
-
-        switch (strtolower($method)) {
-            case 'get':
-                $url .= '?' . http_build_query($param);
-                break;
-            case 'post':
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
-                break;
+        if (empty($parameter['zone']) && empty($parameter['user_id']) && empty($parameter['amount'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
         }
+
+        $title = $parameter['title'];
+        $content = $parameter['msg'];
+        $user_id = $parameter['user_id'];
+        $prop = $parameter['amount'];
+        $server = $parameter['zone'];
+        $award_url = $this->di['db_cfg']['game_url']['award_url'];
+
+        if (strpos($user_id, ',')) {
+            $user_id = explode(',', $user_id);
+        }
+
+        if (strpos($prop, ',')) {
+            $prop = explode(',', $prop);
+        }
+
+        $award_param = [
+            'data' => [
+                'serverId' => $server,
+                'roleId' => $user_id,
+                'prop' => $prop,
+                'title' => $title,
+                'content' => $content,
+                'type' => 1
+            ],
+        ];
+        dump($award_param);exit;
+        $response = $this->post($award_url, json_encode($award_param, true));
+        if (json_decode($response['code']) == 0) {
+            return ['code' => 0, 'mgs' => 'success'];
+        } else {
+            return ['code' => 1, 'msg' => 'failed'];
+        }
+    }
+
+     /**
+     * 发送请求
+     * @param $url
+     * @param $data
+     */
+    public function post($url, $data) {
+
+        //初使化init方法
+        $ch = curl_init();
+
+        //指定URL
         curl_setopt($ch, CURLOPT_URL, $url);
-        $response = curl_exec($ch);
+
+        //设定请求后返回结果
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        //声明使用POST方式来进行发送
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        //发送什么数据呢
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+
+        //忽略证书
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        //忽略header头信息
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+
+        //设置超时时间
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        //发送请求
+        $output = curl_exec($ch);
+
+        //关闭curl
         curl_close($ch);
 
-        return $response;
+        //返回数据
+        return $output;
     }
 }
