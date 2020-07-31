@@ -331,17 +331,17 @@ WHERE
 
     public function playerOffline($parameter)
     {
-        if (empty($paramter['zone'])) {
+        if (empty($parameter['zone'])) {
             return [
                 'code' => 1,
                 'msg' => 'failed'
             ];
         }
-        // 增加禁言用户: type = 1 移除禁言用户: type = 2 玩家踢下线: type = 3
+
+        // 增加禁言用户: type = 1 移除禁言用户: type = 2 增加玩家封禁: type = 3 移除玩家封禁: type = 4
         $send['type'] = 3;
-        $send['role_id'] = $paramter['role_id'];
-        $send['start_time'] = '';
-        $send['end_time'] = '';
+        $send['role_id'] = $parameter['role_id'];
+        $send['end_time'] = $parameter['end'];
         $url = $this->di['db_cfg']['game_url']['banchat_url'];
         $send_data = [
             'data' => $send
@@ -387,6 +387,62 @@ FROM
             'msg' => 'success',
             'data' => $result
         ];
+    }
+
+    public function getRoleIdByName($parameter)
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+
+        $roleId = $parameter['name'] . ';';
+        try {
+            $sql = "SELECT
+            `RoleID` 
+        FROM
+            BasicRes 
+        WHERE
+            `PlayerName` = '{$roleId}'";
+            $result = $this->gameDb($parameter['zone'])->fetchAssoc($sql);
+        } catch (\Exception $e) {
+            return [
+                'code' => 1,
+                'msg' => 'failed'
+            ];
+        }
+        
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => $result['RoleID']
+        ];
+    }
+
+    public function cancelPlayerBan($parameter) 
+    {
+        if (empty($parameter['zone'])) {
+            return [
+                'code' => 1,
+                'msg' => 'failed',
+            ];
+        }
+
+        $url = $this->di['db_cfg']['game_url']['banchat_url'];
+
+        $send_data = [
+            'zone' => $parameter['zone'],
+            'roleId' => $parameter['role_id'],
+            'start_time' => '',
+            'end_time' => ''
+        ];
+
+        dump($send_data);exit;
+        // 直接发送请求给游戏服务端
+        $result = $this->post($url, $send_data);
+        return $result;
     }
 
     /**

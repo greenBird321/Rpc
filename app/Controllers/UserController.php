@@ -130,7 +130,24 @@ class UserController extends ControllerBase
     {
         $paramter['zone']    = $this->request->query->get('zone');
         $paramter['role_id'] = $this->request->query->get('role_id');
+        $paramter['end']     = $this->request->query->get('end');
 
         return $this->api('User', __FUNCTION__, $paramter);
+    }
+
+    public function getRoleIdByName()
+    {
+        $parameter['zone'] = $this->request->query->get('zone');
+        $parameter['name'] = $this->request->query->get('name');
+
+        return $this->api('User', __FUNCTION__, $parameter);
+    }
+
+    public function cancelPlayerBan()
+    {
+        $parameter['zone'] = $this->request->query->get('zone');
+        $parameter['role_id'] = $this->request->query->get('role_id');
+
+        return $this->api('User', __FUNCTION__, $parameter);
     }
 }
