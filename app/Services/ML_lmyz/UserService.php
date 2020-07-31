@@ -180,8 +180,8 @@ WHERE
             $result['create_time']     = date('Y-m-d H:i:s', trim($value['CreateTime'], ';'));                  // 角色创建时间
             $result['quick_afkNum']    = trim($value['AFKQuickTimes'], ';');                                    // 今日快速挂机次数
             $result['GM_privilege']    = trim($value['Privilege'], ';');                                        // gm权限
-            $result['vip_level']       = explode(';', $value['VIP'])[0];                                        // vip等级
-            $result['vip_exp']         = explode(';', $value['VIP'])[1];                                        // vip经验
+            $result['vip_level']       = empty($value['VIP']) ? '' : explode(';', $value['VIP'])[0];            // vip等级
+            $result['vip_exp']         = empty($value['VIP']) ? '' : explode(';', $value['VIP'])[1];            // vip经验
         }
 
         $count = 1;
