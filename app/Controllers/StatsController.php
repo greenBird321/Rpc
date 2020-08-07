@@ -55,4 +55,35 @@ class StatsController extends ControllerBase
         $parameter['serverId'] = $this->request->query->get('server_id');
         return $this->api("Stats", __FUNCTION__, $parameter);
     }
+
+    public function statsLost()
+    {
+        $parameter['start'] = $this->request->query->get('start');
+        $parameter['end'] = $this->request->query->get('end');
+        $parameter['lostDay'] = $this->request->query->get('lostDay');
+        $parameter['lostcondition'] = $this->request->query->get('lostcondition');
+        $parameter['channel'] = $this->request->query->get('channel');
+        $parameter['zone'] = $this->request->query->get('zone');
+        return $this->api('Stats', __FUNCTION__, $parameter);
+    }
+
+    // 实时统计第一个页面
+    public function statsTimeQuery()
+    {
+        $parameter['start'] = strtotime($this->request->query->get('start'));
+        $parameter['end'] = strtotime($this->request->query->get('end'));
+        $parameter['channel'] = $this->request->query->get('channel');
+        $parameter['zone'] = $this->request->query->get('zone');
+        return $this->api('Stats', __FUNCTION__, $parameter);
+    }
+
+    // 实时统计第二个页面，(对比页面)
+    public function statsContrast()
+    {
+        $parameter['start'] = strtotime($this->request->query->get('start'));
+        $parameter['end'] = strtotime($this->request->query->get('end'));
+        $parameter['channel'] = $this->request->query->get('channel');
+        $parameter['zone'] = $this->request->query->get('zone');
+        return $this->api('Stats', __FUNCTION__, $parameter);
+    }
 }

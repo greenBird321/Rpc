@@ -14,8 +14,8 @@ class ZoneService extends Service
 {
     // 服务器推荐状态
     private $_flag = [
-        0 => 'recommend',   // 推荐
-        1 => 'default',     // 默认
+        0 => 'notrecommend', // 不推荐
+        1 => 'default',     // 默认推荐
         3 => 'hot',         // 强烈推荐
     ];
 

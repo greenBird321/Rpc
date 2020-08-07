@@ -77,8 +77,8 @@ FROM
 	LEFT JOIN BasicRes ON Account.RoleID = BasicRes.RoleID
 	LEFT JOIN Item ON Account.RoleID = Item.RoleID 
 WHERE
-	Account.RoleID = ?";
-                $attribute = $this->gameDb(trim($parameter['zone'], ';'))->fetchAll($sql, [$parameter['user_id']]);
+    Account.RoleID = ?";
+                $attribute = $this->gameDb($parameter['zone'])->fetchAll($sql, [$parameter['user_id']]);
             } elseif (!empty($parameter['account_id'])) {
                 $sql = "SELECT
 	Account.RoleID,
@@ -110,41 +110,42 @@ FROM
 	LEFT JOIN BasicRes ON Account.RoleID = BasicRes.RoleID
 	LEFT JOIN Item ON Account.RoleID = Item.RoleID 
 WHERE
-	Account.PlatformUID = ?";
-                $attribute = $this->gameDb(trim($parameter['zone'], ';'))->fetchAll($sql, [$parameter['account_id']]);
+    Account.PlatformUID = ?";
+                $attribute = $this->gameDb($parameter['zone'])->fetchAll($sql, [$parameter['account_id']]);
             } elseif (!empty($parameter['name'])) {
+                $name = $parameter['name'];
                 $sql = "SELECT
-	Account.RoleID,
-	Account.PlatformUID,
-    Account.Privilege,
-	Account.ServerId,
-	Account.Privilege,
-    Account.Device,
-	Account.DeviceID,
-	Account.CreateTime,
-	Account.LogoutTime,
-	BasicRes.PlayerLevel,
-	BasicRes.PlayerName,
-	BasicRes.Morale,
-	BasicRes.AFKQuickTimes,
-	BasicRes.ArenaHighRank,
-    BasicRes.ArenaRegular,
-    BasicRes.AreaLastStage,
-    BasicRes.ResonanceStage,
-    BasicRes.DemonWeeklyRank,
-    BasicRes.LuckDraw,
-    BasicRes.FightPow5Hero,
-    BasicRes.Speak,
-    BasicRes.VIP,
-	Item.ItemType,
-	Item.ItemNum 
-FROM
-	Account
-	LEFT JOIN BasicRes ON Account.RoleID = BasicRes.RoleID
-	LEFT JOIN Item ON Account.RoleID = Item.RoleID
-WHERE
-	BasicRes.name = ?";;
-                $attribute = $this->gameDb(trim($parameter['zone'], ';'))->fetchAll($sql, [$parameter['name']]);
+                a.RoleID,
+                a.PlatformUID,
+                a.Privilege,
+                a.ServerId,
+                a.Privilege,
+                a.Device,
+                a.DeviceID,
+                a.CreateTime,
+                a.LogoutTime,
+                b.PlayerLevel,
+                b.PlayerName,
+                b.Morale,
+                b.AFKQuickTimes,
+                b.ArenaHighRank,
+                b.ArenaRegular,
+                b.ResonanceStage,
+                b.AreaLastStage,
+                b.DemonWeeklyRank,
+                b.LuckDraw,
+                b.FightPow5Hero,
+                b.Speak,
+                b.VIP,
+                i.ItemType,
+                i.ItemNum 
+            FROM
+                BasicRes b
+                LEFT JOIN Account a ON b.RoleID = a.RoleID
+                LEFT JOIN Item i ON b.RoleID = i.RoleID 
+            WHERE
+                b.PlayerName LIKE '%{$name}%'";
+                $attribute = $this->gameDb($parameter['zone'])->fetchAll($sql, [$parameter['name']]);
             }
 
         if (!$attribute) {
@@ -154,37 +155,86 @@ WHERE
             ];
         }
 
-        foreach ($attribute as $key => $value) {
-            $result['account_id']      = trim($value['PlatformUID'], ';');                                      // user_id
-            $result['user_id']         = trim($value['RoleID'], ';');                                           // role_id
-            $result['server']          = trim($value['ServerId'], ';');                                         // 服务器id
-            $result['name']            = trim($value['PlayerName'], ';');                                       // role_name
-            if (!empty($value['ItemType'])) {
-                $result['money_type'][] = $value['ItemType'];                                                   // 钱类型
+        if (count($attribute) == 1) {
+            foreach ($attribute as $key => $value) {
+                $result['account_id']      = trim($value['PlatformUID'], ';');                                      // user_id
+                $result['user_id']         = trim($value['RoleID'], ';');                                           // role_id
+                $result['server']          = trim($value['ServerId'], ';');                                         // 服务器id
+                $result['name']            = trim($value['PlayerName'], ';');                                       // role_name
+                if (!empty($value['ItemType']) && $value['ItemType'] == 2) {                                        // 钻石
+                    $result['diamond'] = $value['ItemNum'];                                                 
+                } else {
+                    $result['diamond'] = 0;
+                }
+
+                if (!empty($value['ItemType']) && $value['ItemType'] == 5) {                                        // 金币
+                    $result['coin'] = $value['ItemNum'];                                                           
+                } else {
+                    $result['coin'] = 0;
+                }
+
+                $result['level']           = explode(';', $value['PlayerLevel'])[0];                                // 等级
+                $result['exp']             = explode(';', $value['PlayerLevel'])[1];                                // 经验值
+                $result['morale']          = trim($value['Morale'], ';');                                           // 士气
+                $result['arenaHighRank']   = trim($value['ArenaHighRank'], ';');                                    // 高阶竞技场点数
+                $result['arenaRegular']    = trim($value['ArenaRegular'], ';');                                     // 普通竞技场点数
+                $result['demonWeeklyRank'] = trim($value['DemonWeeklyRank'], ';');                                  // 心魔周榜积分
+                $result['areaLastStage']   = trim($value['AreaLastStage'], ';');                                    // 最后通关关卡
+                $result['luckDraw']        = trim($value['LuckDraw'], ';');                                         // 抽卡统计
+                $result['LogoutTime']      = date('Y-m-d H:i:s', trim($value['LogoutTime'], ';'));                  // 登出时间
+                $result['mPower']          = explode(';', $value['FightPow5Hero'])[0];                              // 战力
+                $result['device']          = $deviceType[trim($value['Device'], ';')];                              // 设备系统
+                $result['device_id']       = $value['DeviceID'];                                                    // 设备id
+                $result['create_time']     = date('Y-m-d H:i:s', trim($value['CreateTime'], ';'));                  // 角色创建时间
+                $result['quick_afkNum']    = trim($value['AFKQuickTimes'], ';');                                    // 今日快速挂机次数
+                $result['GM_privilege']    = trim($value['Privilege'], ';');                                        // gm权限
+                $result['vip_level']       = empty($value['VIP']) ? '' : explode(';', $value['VIP'])[0];            // vip等级
+                $result['vip_exp']         = empty($value['VIP']) ? '' : explode(';', $value['VIP'])[1];            // vip经验
             }
-            if (!empty($value['ItemNum'])) {
-                $result['money_num'][]     = $value['ItemNum'];                                                 // 钱
+        } else {
+            for($i = 0; $i < count($attribute); $i++) {
+
             }
-            $result['level']           = explode(';', $value['PlayerLevel'])[0];                                // 等级
-            $result['exp']             = explode(';', $value['PlayerLevel'])[1];                                // 经验值
-            $result['morale']          = trim($value['Morale'], ';');                                           // 士气
-            $result['arenaHighRank']   = trim($value['ArenaHighRank'], ';');                                    // 高阶竞技场点数
-            $result['arenaRegular']    = trim($value['ArenaRegular'], ';');                                     // 普通竞技场点数
-            $result['demonWeeklyRank'] = trim($value['DemonWeeklyRank'], ';');                                  // 心魔周榜积分
-            $result['areaLastStage']   = trim($value['AreaLastStage'], ';');                                    // 最后通关关卡
-            $result['luckDraw']        = trim($value['LuckDraw'], ';');                                         // 抽卡统计
-            $result['LogoutTime']      = date('Y-m-d H:i:s', trim($value['LogoutTime'], ';'));                  // 登出时间
-            $result['mPower']          = explode(';', $value['FightPow5Hero'])[0];                              // 战力
-            $result['device']          = $deviceType[trim($value['Device'], ';')];                              // 设备系统
-            $result['device_id']       = $value['DeviceID'];                                                    // 设备id
-            $result['create_time']     = date('Y-m-d H:i:s', trim($value['CreateTime'], ';'));                  // 角色创建时间
-            $result['quick_afkNum']    = trim($value['AFKQuickTimes'], ';');                                    // 今日快速挂机次数
-            $result['GM_privilege']    = trim($value['Privilege'], ';');                                        // gm权限
-            $result['vip_level']       = empty($value['VIP']) ? '' : explode(';', $value['VIP'])[0];            // vip等级
-            $result['vip_exp']         = empty($value['VIP']) ? '' : explode(';', $value['VIP'])[1];            // vip经验
+            foreach ($attribute as $k => $v) {
+                // 钻石
+                if (!empty($v['ItemType']) && $v['ItemNum'] == 2) {
+                    $diamonds = $v['ItemNum'];
+                }
+
+                // 金币
+                if (!empty($v['ItemType']) && $v['ItemNum'] == 5) {
+                    $coin = $v['ItemNum'];
+                }
+                $result[] = [
+                    'account_id'      => trim($v['PlatformUID'], ';'),
+                    'user_id'         => trim($v['RoleID'], ';'),
+                    'server'          => trim($v['ServerId'], ';'),
+                    'name'            => trim($v['PlayerName'], ';'),
+                    'diamonds'        => $diamonds,
+                    'coin'            => $coin,
+                    'level'           => explode(';', $v['PlayerLevel'])[0],
+                    'exp'             => explode(';', $v['PlayerLevel'])[1],
+                    'morale'          => trim($v['Morale'], ';'),
+                    'arenaHighRank'   => trim($v['ArenaHighRank'], ';'),
+                    'arenaRegular'    => trim($v['ArenaRegular'], ';'),
+                    'demonWeeklyRank' => trim($v['DemonWeeklyRank'], ';'),
+                    'areaLastStage'   => trim($v['AreaLastStage'], ';'),
+                    'luckDraw'        => trim($v['LuckDraw'], ';'),
+                    'LogoutTime'      => date('Y-m-d H:i:s', trim($v['LogoutTime'], ';')),
+                    'mPower'          => explode(';', $v['FightPow5Hero'])[0],
+                    'device'          => $deviceType[trim($v['Device'], ';')],
+                    'device_id'       => $v['DeviceID'],
+                    'create_time'     => date('Y-m-d H:i:s', trim($v['CreateTime'], ';')),
+                    'quick_afkNum'    => trim($v['AFKQuickTimes'], ';'),
+                    'GM_privilege'    => trim($v['Privilege'], ';'),
+                    'vip_level'       => empty($v['VIP']) ? '' : explode(';', $v['VIP'])[0],
+                    'vip_exp'         => empty($v['VIP']) ? '' : explode(';', $v['VIP'])[1]
+                ]; 
+            }
         }
 
-        $count = 1;
+        dump($result);exit;
+        $count = count($attribute);
 
         return [
             'code' => 0,

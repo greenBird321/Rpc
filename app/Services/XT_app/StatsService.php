@@ -118,7 +118,7 @@ FROM
 		AreaID 
 	) aa 
 GROUP BY
-	aa.AreaID";
+	aa.AreaStageID";
             $level_info = $this->gameDb($serverId)->fetchAll($levelInfo_sql);
 
             $server_sql = "SELECT `Name` serverName FROM ServerRegion WHERE ServerId = {$serverId}";
