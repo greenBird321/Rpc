@@ -73,8 +73,8 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
             foreach ($lostUser as $key => $value) {
                 $tmp = 0;
                 for ($i = count($value); $i > 1; $i--) {
-                    $tmp += $value[$i]['activity_user'];
-                    $lostUser[$key][$i - 1]['total_user'] += $tmp;
+                    $tmp += $value[$i - 1]['activity_user'];
+                    $lostUser[$key][$i - 2]['total_user'] += $tmp;
                 }
             }
     
@@ -148,8 +148,8 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
             ];
         }
         
-        $start = $paramter['start'];
-        $end = $paramter['end'];
+        $start = strtotime($paramter['start']);
+        $end = strtotime($paramter['end']);
 
         $server = $paramter['zone'];
         if (strpos($server, ',')) {

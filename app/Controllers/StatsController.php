@@ -70,8 +70,8 @@ class StatsController extends ControllerBase
     // 实时统计第一个页面
     public function statsTimeQuery()
     {
-        $parameter['start'] = strtotime($this->request->query->get('start'));
-        $parameter['end'] = strtotime($this->request->query->get('end'));
+        $parameter['start'] = $this->request->query->get('start');
+        $parameter['end'] = $this->request->query->get('end');
         $parameter['channel'] = $this->request->query->get('channel');
         $parameter['zone'] = $this->request->query->get('zone');
         return $this->api('Stats', __FUNCTION__, $parameter);
