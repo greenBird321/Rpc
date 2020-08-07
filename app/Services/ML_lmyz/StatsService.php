@@ -22,8 +22,8 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
     FROM
         BasicRes 
     WHERE
-        CreateTime BETWEEN  1596013602
-        AND 1596091198
+        CreateTime BETWEEN  $start
+        AND $end
         AND AreaLastStage != ''
     GROUP BY
         AreaLastStage";
