@@ -36,7 +36,7 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
                     $lostUser[$key][trim($v['AreaLastStage'], ';')]['total_user'] = 0;
                     if ($lostUser[$key][trim($v['AreaLastStage'], ';')]['money'] == null) {
                         $lostUser[$key][trim($v['AreaLastStage'], ';')]['money'] = 0;
-                    }
+                    }  
                     
                 }
                 ksort($lostUser[$key]);
@@ -68,7 +68,8 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
                 }
                 ksort($lostUser[$key]);
             }
-    
+            
+            // 计算总活跃
             foreach ($lostUser as $key => $value) {
                 $tmp = 0;
                 for ($i = count($value); $i >= 2; $i--) {
@@ -76,7 +77,15 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
                     $lostUser[$key][$i - 1]['total_user'] += $tmp;
                 }
             }
-    
+
+            // 计算 总活跃 - 滞留账号
+            foreach ($lostUser as $key => $value) {
+                $temp = $value[1]['total_user'];
+                for ($i = 1; $i < count($value); $i++) {
+                    $temp -= (int)$value[$i]['activity_user'];
+                    $lostUser[$key][$i]['total_user'] = $temp;
+                }
+            }
             // 计算流失用户
             $lostSql = "SELECT
             RoleID,
