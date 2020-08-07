@@ -18,13 +18,12 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
         COUNT( RoleID ) activity_user,
         AreaLastStage,
         SUM( `Money` ) money,
-        COUNT(
-        nullif( `Money`, '' )) chargeCount 
+        COUNT(nullif( `Money`, '' )) chargeCount 
     FROM
         BasicRes 
     WHERE
-        CreateTime BETWEEN $start
-        AND $end 
+        CreateTime BETWEEN  1596013602
+        AND 1596091198
         AND AreaLastStage != ''
     GROUP BY
         AreaLastStage";
@@ -33,16 +32,16 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
         if (!empty($result[$paramter['zone']])) {
             foreach ($result as $key => $value) {
                 foreach ($value as $k => $v) {
-                    $lostUser[$key][$v['AreaLastStage']] = $v;
-                    $lostUser[$key][$v['AreaLastStage']]['total_user'] = 0;
-                    if ($lostUser[$key][$v['AreaLastStage']]['money'] == null) {
-                        $lostUser[$key][$v['AreaLastStage']]['money'] = 0;
+                    $lostUser[$key][trim($v['AreaLastStage'], ';')] = $v;
+                    $lostUser[$key][trim($v['AreaLastStage'], ';')]['total_user'] = 0;
+                    if ($lostUser[$key][trim($v['AreaLastStage'], ';')]['money'] == null) {
+                        $lostUser[$key][trim($v['AreaLastStage'], ';')]['money'] = 0;
                     }
                     
                 }
                 ksort($lostUser[$key]);
             }
-            
+
             // 获得最大关卡数
             foreach($lostUser as $key => $value) {
                foreach ($value as $k => $v) {
@@ -72,9 +71,9 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
     
             foreach ($lostUser as $key => $value) {
                 $tmp = 0;
-                for ($i = count($value); $i > 1; $i--) {
-                    $tmp += $value[$i - 1]['activity_user'];
-                    $lostUser[$key][$i - 2]['total_user'] += $tmp;
+                for ($i = count($value); $i >= 2; $i--) {
+                    $tmp += $value[$i]['activity_user'];
+                    $lostUser[$key][$i - 1]['total_user'] += $tmp;
                 }
             }
     
