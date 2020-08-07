@@ -51,7 +51,7 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
                     }
                }
             }
-    
+
             // 数据补全
             foreach ($lostUser as $key => $value) {
                 for ($i = 1; $i <= $maxKey; $i++) {
@@ -72,9 +72,11 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
             // 计算总活跃
             foreach ($lostUser as $key => $value) {
                 $tmp = 0;
-                for ($i = count($value); $i >= 2; $i--) {
+                for ($i = count($value) - 1 ; $i >= 1; $i--) {
                     $tmp += $value[$i]['activity_user'];
-                    $lostUser[$key][$i - 1]['total_user'] += $tmp;
+                    if ($i != 1) {
+                        $lostUser[$key][$i - 1]['total_user'] += $tmp;
+                    }
                 }
             }
 
@@ -83,9 +85,10 @@ class StatsService extends \Xt\Rpc\Services\XT_app\StatsService
                 $temp = $value[1]['total_user'];
                 for ($i = 1; $i < count($value); $i++) {
                     $temp -= (int)$value[$i]['activity_user'];
-                    $lostUser[$key][$i]['total_user'] = $temp;
+                    $lostUser[$key][$i+1]['total_user'] = $temp;
                 }
             }
+            
             // 计算流失用户
             $lostSql = "SELECT
             RoleID,
